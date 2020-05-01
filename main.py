@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
+template = ''
 
 def get_fact():
 
@@ -16,10 +17,20 @@ def get_fact():
 
     return facts[0].getText()
 
+def get_pig_latin(fact):
+	url = 'http://hidden-journey-62459.herokuapp.com/piglatinize/'
+	data = {'input_text': fact}
+	response = requests.post(url, allow_redirects=False, data=data)
+	new_url = response.headers['Location']
+	return new_url
+
 
 @app.route('/')
 def home():
-    return "FILL ME!"
+    fact = get_fact().strip()
+    body = get_pig_latin(fact)
+
+    return Response(response=body, mimetype='text/plain')
 
 
 if __name__ == "__main__":
